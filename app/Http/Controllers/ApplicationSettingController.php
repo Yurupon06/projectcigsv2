@@ -20,6 +20,9 @@ class ApplicationSettingController extends Controller
             'app_name' => 'required|string|max:255',
             'app_logo' => 'required|image|mimes:jpeg,jpg,png|max:2048',
             'app_address' => 'nullable|string|max:255',
+            'japati_token' => 'nullable|string|max:255',
+            'japati_gateway' => 'nullable|string|max:255',
+            'japati_url' => 'nullable|string|max:255',
         ]);
 
         if ($request->hasFile('app_logo') && $request->file('app_logo')->isValid()) {
@@ -32,6 +35,9 @@ class ApplicationSettingController extends Controller
             'app_name' => $request->app_name,
             'app_logo' => $path,
             'app_address' => $request->app_address,
+            'japati_token' => $request->japati_token,
+            'japati_gateway' => $request->japati_gateway,
+            'japati_url' => $request->japati_url,
         ]);
         return redirect()->route('application-setting.index')->with('success', 'Application setting created successfully.');
     }
@@ -39,9 +45,12 @@ class ApplicationSettingController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'app_name' => 'required|string|max:255',
+            'app_name' => 'nullable|string|max:255',
             'app_logo' => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             'app_address' => 'nullable|string|max:255',
+            'japati_token' => 'nullable|string|max:255',
+            'japati_gateway' => 'nullable|string|max:255',
+            'japati_url' => 'nullable|string|max:255',
         ]);
 
         $setting = ApplicationSetting::first();
@@ -51,9 +60,12 @@ class ApplicationSettingController extends Controller
                 'app_name' => $request->app_name,
                 'app_logo' => $path,
                 'app_address' => $request->app_address,
+                'japati_token' => $request->japati_token,
+                'japati_gateway' => $request->japati_gateway,
+                'japati_url' => $request->japati_url,
             ]);
         } else {
-            $setting->update($request->only(['app_name', 'app_address']));
+            $setting->update($request->only(['app_name', 'app_address', 'japati_token', 'japati_gateway', 'japati_url']));
         }
 
         return redirect()->back()->with('success', 'Settings updated successfully');

@@ -12,6 +12,9 @@ class ApplicationSetting extends Model
     protected $fillable = [
         'app_name',
         'app_logo',
-        'app_address'
+        'app_address',
+        'japati_token',
+        'japati_gateway',
+        'japati_url',
     ];
 }

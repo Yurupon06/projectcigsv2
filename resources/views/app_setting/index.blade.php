@@ -54,6 +54,27 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_token" class="form-label">Japati Token</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_token') is-invalid @enderror" placeholder="Japati Token" aria-label="japati_token" id="japati_token" name="japati_token" value="{{ old('japati_token', $setting->japati_token) }}">
+                                    @error('japati_token')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_gateway" class="form-label">Japati Gateway</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_gateway') is-invalid @enderror" placeholder="Japati Gateway" aria-label="japati_gateway" id="japati_gateway" name="japati_gateway" value="{{ old('japati_gateway', $setting->japati_gateway) }}">
+                                    @error('japati_gateway')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_url" class="form-label">Japati URL</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_url') is-invalid @enderror" placeholder="Japati URL" aria-label="japati_url" id="japati_url" name="japati_url" value="{{ old('japati_url', $setting->japati_url) }}">
+                                    @error('japati_url')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                                 <button type="submit" class="btn btn-primary mb-3 ms-3 me-3">Update</button>
                             </form>
                         @else
@@ -88,6 +109,27 @@
                                         class="ps-2 form-control border border-secondary-subtle @error('app_address') is-invalid @enderror"
                                         placeholder="Address" rows="3" style="resize: none;">{{ old('app_address') }}</textarea>
                                     @error('app_address')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_token" class="form-label">Japati Token</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_token') is-invalid @enderror" placeholder="Japati Token" aria-label="japati_token" id="japati_token" name="japati_token" value="{{ old('japati_token') }}">
+                                    @error('japati_token')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_gateway" class="form-label">Japati Gateway</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_gateway') is-invalid @enderror" placeholder="Japati Gateway" aria-label="japati_gateway" id="japati_gateway" name="japati_gateway" value="{{ old('japati_gateway') }}">
+                                    @error('japati_gateway')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 ms-3 me-3">
+                                    <label for="japati_url" class="form-label">Japati URL</label>
+                                    <input type="text" class="ps-2 form-control border border-secondary-subtle @error('japati_url') is-invalid @enderror" placeholder="Japati URL" aria-label="japati_url" id="japati_url" name="japati_url" value="{{ old('japati_url') }}">
+                                    @error('japati_url')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
