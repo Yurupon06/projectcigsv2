@@ -51,8 +51,14 @@
     <div class="container-fluid py-4 mt-4">
         <div class="row">
             <div class="col-md-12 d-flex flex-column flex-md-row">
-                <div class="col-md-8 me-md-2 mb-4 mb-md-0" style="overflow: hidden;">
-                    <div class="card my-4">
+                <div class="col-md-8 me-md-2 mb-4 mb-md-0 mt-4" style="overflow: hidden;">
+                <a href="{{ route('cashier.index', ['filter' => 'membership', 'search' => request('search'), 'per_page' => request('per_page')]) }}" type="button" class=" {{ request('filter', 'membership') == 'membership' ? 'active' : '' }} btn btn-primary btn-sm align-items-center btn-membership" style="font-size: 12px; padding: 10px 12px; background-color: #ff5c00; box-shadow: 0 4px 6px rgba(0, 0, 255, 0.1); border: none;">
+                    <i class="fas fa-user-tag me-2" style="font-size: 18px;"></i> Membership
+                </a>
+                <a href="{{route('cashier.index', ['filter' => 'complement', 'per_page' => request('per_page')]) }}" type="button" class=" {{ request('filter', 'membership') == 'complement' ? 'active' : '' }} btn btn-sm align-items-center btn-complement mx-2" style="font-size: 12px; padding: 10px 12px; background-color:#007bff; color: white; box-shadow: 0 4px 6px rgba(255, 165, 0, 0.1); border: none;">
+                    <i class="fas fa-shopping-basket me-2" style="font-size: 18px;"></i> Complement
+                </a>
+                    <div class="card mb-4">
                         <div class="card-header pb-0 py-1">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6 class="mb-2 page">Cashier</h6>
@@ -83,6 +89,7 @@
                         <div class="card-body px-0">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0" id="datatable">
+                                @if(request('filter', 'membership') == 'membership' || !request('filter'))
                                     <thead>
                                         <tr>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
@@ -95,48 +102,86 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                            @foreach ($orders as $i => $dt)
+                                                <tr>
+                                                @if(request('filter') == 'membership' || !request('filter'))
+                                                    
+                                                    <td>
+                                                        <div class="d-flex px-2 py-1">
+                                                            {{ ($orders->currentPage() - 1) * $orders->perPage() + $i + 1 . ' . ' }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {{ $dt->customer->user->name }}
+                                                    </td>
+                                                    <!-- <td>
+                                                        {{ $dt->product->product_name }}
+                                                    </td> -->
+                                                    <td>
+                                                        {{ \Carbon\Carbon::parse($dt->order_date)->translatedFormat('d F Y H:i') }}
+                                                    </td>
+                                                    <td>
+                                                        <a class="u" href="{{route('cashier.qrscan', $dt->qr_token)}}">
+                                                        Rp {{ number_format($dt->total_amount) }}
+                                                    </td>
+                                                    <!-- <td
+                                                        style="color: {{ $dt->status === 'unpaid' ? 'red' : ($dt->status === 'paid' ? 'green' : 'black') }}">
+                                                        {{ $dt->status }}
+                                                    </td>
+                                                    <td class="align-middle text-center text-sm">
+                                                        <a href="{{route('cashier.qrscan', $dt->qr_token)}}">
+                                                        <span class="btn bg-gradient-info ws-15 my-2 mb-2 btn-sm">Detail</span>
+                                                        </a>
+                                                    </td> -->
+                                                @endif
+                                                </tr>
+                                            @endforeach
+                                    </tbody>
+                                @endif
+                                @if(request('filter') == 'complement')
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Order Id</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         @foreach ($orders as $i => $dt)
                                             <tr>
-                                                <td>
+                                            @if(request('filter') == 'complement' || !request('filter'))
+                                                <td >
                                                     <div class="d-flex px-2 py-1">
-                                                        {{ ($orders->currentPage() - 1) * $orders->perPage() + $i + 1 . ' . ' }}
+                                                        {{ $loop->iteration ++ . ' . ' }} <!-- Nomor urut -->
                                                     </div>
+                                                    
                                                 </td>
                                                 <td>
-                                                    {{ $dt->customer->user->name }}
-                                                </td>
-                                                <!-- <td>
-                                                    {{ $dt->product->product_name }}
-                                                </td> -->
-                                                <td>
-                                                    {{ \Carbon\Carbon::parse($dt->order_date)->translatedFormat('d F Y H:i') }}
+                                                    <a class="u" href="{{ route('cashier.checkout', $dt->qr_token) }}">
+                                                    {{ $dt->id }}</a>
                                                 </td>
                                                 <td>
-                                                    <a class="u" href="{{route('cashier.qrscan', $dt->qr_token)}}">
                                                     Rp {{ number_format($dt->total_amount) }}
                                                 </td>
-                                                <!-- <td
-                                                    style="color: {{ $dt->status === 'unpaid' ? 'red' : ($dt->status === 'paid' ? 'green' : 'black') }}">
-                                                    {{ $dt->status }}
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <a href="{{route('cashier.qrscan', $dt->qr_token)}}">
-                                                    <span class="btn bg-gradient-info ws-15 my-2 mb-2 btn-sm">Detail</span>
-                                                    </a>
-                                                </td> -->
                                             </tr>
+                                            @endif  
                                         @endforeach
                                     </tbody>
+                                @endif
                                 </table>
                             </div>
                         </div>
                         <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-12">
-                                    {{ $orders->appends(request()->except('page'))->links('pagination::bootstrap-5') }}
-                                </div>
-                            </div>
+                        <div class="row">
+                            @if (request('filter') == 'membership')
+                            {{ $orders->appends(['filter' => 'membership', 'search' => request('search'), 'per_page' => request('per_page')])->links('pagination::bootstrap-5') }}
+
+                            @else
+                            {{ $orders->appends(['filter' => 'complement', 'per_page' => request('per_page')])->links('pagination::bootstrap-5') }}
+
+                            @endif
                         </div>
+                    </div>
                     </div>
                 </div>
 

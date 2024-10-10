@@ -26,7 +26,6 @@
         }
 
         .change-display {
-            margin-bottom: 1rem;
             text-align: right;
             font-weight: bold;
         }
@@ -163,7 +162,7 @@
                             <button type="button" class="btn-delete" onclick="deleteLastDigit()">C</button>
                             
                         </div>
-                        <div class="row mt-4">
+                        <div class="row mt-3">
                             <div class="col-md-12">
                                 <form action="{{ route('payments.complement', $orderComplement->id) }}" method="POST" class="text-end">
                                     @csrf

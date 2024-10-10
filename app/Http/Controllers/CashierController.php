@@ -29,30 +29,54 @@ class CashierController extends Controller
     {
         $search = $request->input('search');
         $perPage = $request->input('per_page', 5);
-
-        $orders = Order::with(['customer.user', 'product'])
-                        ->when($search, function ($query, $search) {
-                            return $query->where(function ($q) use ($search) {
-                                $q->whereHas('customer.user', function ($q) use ($search) {
-                                    $q->where('name', 'like', "%{$search}%");
-                                })
-                                ->orWhereHas('product', function ($q) use ($search) {
-                                    $q->where('product_name', 'like', "%{$search}%");
-                                })
-                                ->orWhere('order_date', 'like', "%{$search}%")
-                                ->orWhere('total_amount', 'like', "%{$search}%")
-                                ->orWhere('status', 'like', "%{$search}%");
-                            });
+        $filterType = $request->input('filter', 'membership');
+    
+        // Initialize query builder for orders (not collection)
+        $ordersQuery = null;
+    
+        // Check the filter type and retrieve corresponding orders
+        if ($filterType === 'membership') {
+            $ordersQuery = Order::with(['customer.user', 'product'])
+                ->when($search, function ($query, $search) {
+                    return $query->where(function ($q) use ($search) {
+                        $q->whereHas('customer.user', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
                         })
-                        ->where('status', 'unpaid')
-                        ->orderBy('order_date', 'desc')
-                        ->paginate($perPage)
-                        ->appends(['search' => $search]);
-        
-        
-
+                        ->orWhereHas('product', function ($q) use ($search) {
+                            $q->where('product_name', 'like', "%{$search}%");
+                        })
+                        ->orWhere('order_date', 'like', "%{$search}%")
+                        ->orWhere('total_amount', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%");
+                    });
+                })
+                ->where('status', 'unpaid') // Only unpaid memberships
+                ->orderBy('order_date', 'desc');
+        } elseif ($filterType === 'complement') {
+            $ordersQuery = OrderComplement::where('status', 'unpaid')
+                ->when($search, function ($query, $search) {
+                    return $query->where(function ($q) use ($search) {
+                        $q->where('order_complement_id', 'like', "%{$search}%")
+                          ->orWhere('amount', 'like', "%{$search}%");
+                    });
+                })
+                ->orderBy('created_at', 'desc');
+        }
+    
+        // Paginate the query results
+        if ($ordersQuery) {
+            $orders = $ordersQuery->paginate($perPage)->appends([
+                'search' => $search,
+                'filter' => $filterType,
+            ]);
+        } else {
+            $orders = new \Illuminate\Pagination\LengthAwarePaginator([], 0, $perPage);
+        }
+    
         return view('cashier.index', compact('orders'));
     }
+    
+
     public function show($qr_token)
     {
         $order = order::with('customer', 'product')->findOrFail($qr_token)->get();
