@@ -200,35 +200,39 @@ class ReportController extends Controller
         // dd($pdfPath); // Mengambil path PDF yang dihasilkan
         $adminUsers = User::where('role', 'admin')->get(); 
         if ($adminUsers->isNotEmpty()) {
-            foreach ($adminUsers as $admin) {
-                if ($admin->phone) { 
-                    $phone = $admin->phone;
-                    $app = ApplicationSetting::first();
-                    $message = "Data *$app->app_name* pada *$filter* ini dari *$startDate* - *$endDate* :\n" .
-                    "Total sales : *Rp $totalAmount*\n" .
-                    "New user : *$totalUser*\n" .
-                    "New member : *$totalMember*\n" .
-                    "Here is your report:";
+            try {
+                foreach ($adminUsers as $admin) {
+                    if ($admin->phone) { 
+                        $phone = $admin->phone;
+                        $app = ApplicationSetting::first();
+                        $message = "Data *$app->app_name* pada *$filter* ini dari *$startDate* - *$endDate* :\n" .
+                        "Total sales : *Rp $totalAmount*\n" .
+                        "New user : *$totalUser*\n" .
+                        "New member : *$totalMember*\n" .
+                        "Here is your report:";
+        
+                        $apiText = Http::baseUrl($app->japati_url)
+                        ->withToken($app->japati_token)
+                        ->post('/api/send-message', [
+                            'gateway' => $app->japati_gateway,
+                            'number' => $phone,
+                            'type' => 'text',
+                            'message' => $message,
+                        ]);
     
-                    $apiText = Http::baseUrl($app->japati_url)
-                    ->withToken($app->japati_token)
-                    ->post('/api/send-message', [
-                        'gateway' => $app->japati_gateway,
-                        'number' => $phone,
-                        'type' => 'text',
-                        'message' => $message,
-                    ]);
-
-                    $apiCustomer = Http::baseUrl($app->japati_url)
-                    ->withToken($app->japati_token)
-                    ->post('/api/send-message', [
-                        'gateway' => $app->japati_gateway,
-                        'number' => $phone,
-                        'type' => 'media',
-                        'message' => $message, // Pesan yang menyertakan semua informasi
-                        'media_file' => $pdfPath,
-                    ]);
+                        $apiCustomer = Http::baseUrl($app->japati_url)
+                        ->withToken($app->japati_token)
+                        ->post('/api/send-message', [
+                            'gateway' => $app->japati_gateway,
+                            'number' => $phone,
+                            'type' => 'media',
+                            'message' => $message, // Pesan yang menyertakan semua informasi
+                            'media_file' => $pdfPath,
+                        ]);
+                    }
                 }
+            } catch (\Throwable $th) {
+                return redirect()->back()->with('error', 'Something went wrong, try again later.');
             }
         } else {
             return redirect()->back()->with('error', 'No admin users found.');
