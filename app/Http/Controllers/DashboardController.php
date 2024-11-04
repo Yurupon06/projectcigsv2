@@ -163,7 +163,7 @@ class DashboardController extends Controller
             'orderUpdateTime',
             'paymentUpdateTime',
             'memberUpdateTime',
-            'combinedData' // Gabungan pesanan dan order complements
+            'combinedData' 
         ));
     }
     

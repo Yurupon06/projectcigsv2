@@ -377,14 +377,12 @@ class ReportController extends Controller
 
 
     public function generatePdf($filter = 'Minggu') {
-        // $filter sudah diterima sebagai parameter
         $chartDataResponse = $this->generateChartData($filter);
         $chartDataJson = json_encode($chartDataResponse['chartData']);
         $quickChartUrl = "https://quickchart.io/chart?c=" . urlencode($chartDataJson);
         
         $html = view('report-admin.pdf', array_merge($chartDataResponse, compact('quickChartUrl', 'filter')))->render();
     
-        // Tentukan path untuk menyimpan PDF
         $pdfDirectory = public_path('storage/reports');
         if (!file_exists($pdfDirectory)) {
             mkdir($pdfDirectory, 0755, true);
@@ -402,13 +400,10 @@ class ReportController extends Controller
         ');
         $mpdf->WriteHTML($html);
         
-        // Simpan PDF ke file
         $mpdf->Output($pdfPath, 'I');
     
-        // Streaming PDF ke browser
         // $mpdf->Output('Report_' . now()->format('YmdHis') . '.pdf', 'I');
     
-        // URL untuk mengakses file PDF (jika diperlukan)
         // return asset('storage/reports'. $pdfName);
         
     }
